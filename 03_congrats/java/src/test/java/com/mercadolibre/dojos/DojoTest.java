@@ -13,47 +13,58 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Tests for the dojo.
  */
 public class DojoTest {
-	
+
 	@Before
 	public void setup() {
 	}
-	
+
 	@Test
-	@Ignore
 	public void test_user_buy_item_buy_equal_pay_and_pais_with_efecty_so_efecty_congrats_is_rendered() throws IOException {
 	    Map efectyAndBuyEqualPay = JSONMapper.toObject(
             ResourceLoader.getFileAsString("./params/efectyBuyEqualPay.json"),
             Map.class
         );
 
-	    assertEquals(efectyAndBuyEqualPay.get("id"), 1372165859 /* order id */);
-		
-		// ... 
-        // Code here!
-        // ... 
-	    // {
-        //     "status": "success",
-        //     "substatus": null,
-        //     "heading": "¡Apúrate a pagar!",
-        //     "title": "Paga ${price} en ${paymentMethodName} para reservar tu compra",
-        // }	
+		Order order = new Order(efectyAndBuyEqualPay);
+
+		Congrats efectyCongrats = new Congrats(order);
+
+		Map expectedMap = new HashMap(){{
+			put("status", "success");
+			put("substatus", null);
+			put("heading", "¡Apúrate a pagar!");
+			put("title", "Paga ${price} en ${paymentMethodName} para reservar tu compra");
+		}};
+
+		assertEquals(expectedMap, efectyCongrats.asMap());
 	}
-	
+
 	@Test
-	@Ignore
 	public void test_should_render_congrats_for_orders_paid_by_credit_cards_shipped_customly() throws IOException {
         Map creditCardBuyEqualPayWithCustomShipping = JSONMapper.toObject(
                 ResourceLoader.getFileAsString("./params/creditCardBuyEqualPayWithCustomShipping.json"),
                 Map.class
         );
 
-        assertEquals(creditCardBuyEqualPayWithCustomShipping.get("id"), 1372551201 /* order id */);
+		Order order = new Order(creditCardBuyEqualPayWithCustomShipping);
+
+		Congrats ccCongrats = new Congrats(order);
+
+		Map expectedMap = new HashMap(){{
+			put("status", "success");
+			put("substatus", null);
+			put("heading", "¡Tu pago está aprobado!");
+			put("title", "Coordina con el vendedor el envío");
+		}};
+
+		assertEquals(expectedMap, ccCongrats.asMap());
 
         // ...
         // Code here!
